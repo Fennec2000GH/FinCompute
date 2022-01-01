@@ -23,8 +23,8 @@ def LineMultipleStocks(tickerList: str):
         fig.add_trace(go.Scatter(x=stock.index,y=stock['Close'],name=ticker),secondary_y=False)
     return fig
 
-def CandleStick(ticker: str):
-    stock = stocks.FetchStockHistory(ticker, period='5y')
+def CandleStick(ticker: str, period='1y'):
+    stock = stocks.FetchStockHistory(ticker, period=period)
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Candlestick(x=stock.index,
                               open=stock['Open'],
@@ -38,3 +38,4 @@ def CandleStick(ticker: str):
 
 def GetHTMLCanvas(fig, path=r'data\graph.html'):   
     fig.write_html(path)
+    
