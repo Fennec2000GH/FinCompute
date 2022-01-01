@@ -40,3 +40,8 @@ vignettes/*.pdf
 
 # Virtual Environment
 venv/
+
+# PyCache
+src/modules/__pycache__
+
+data/graph.html

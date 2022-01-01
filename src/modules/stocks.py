@@ -1,9 +1,18 @@
 import yfinance as yf
+from yfinance import ticker
 
-def fetch_stocks_history(ticker: str, period='max'):
+def FetchStockHistory(ticker: str, period='1y'):
     obj = yf.Ticker(ticker)
     return obj.history(period)
 
-def fetch_stocks_info(ticker: str):
+def FetchStockInfo(ticker: str):
     obj = yf.Ticker(ticker)
     return obj.info
+
+def FetchStock(ticker):
+    obj = yf.Ticker(ticker)
+    return obj
+
+def FetchIndexFund(index: str):
+    return yf.download(index, group_by = 'ticker')
+    
