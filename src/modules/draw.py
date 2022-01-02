@@ -1,10 +1,14 @@
+import os
 import pandas as pd
 from pandas_datareader import data as web
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 
-import stocks
+try:
+    import src.modules.stocks as stocks
+except ModuleNotFoundError:
+    import stocks
 
 def LineStocks(ticker: str, volume = False, period='1y'):
     stock = stocks.FetchStockHistory(ticker, period)
@@ -23,7 +27,7 @@ def LineMultipleStocks(tickerList: str):
         fig.add_trace(go.Scatter(x=stock.index,y=stock['Close'],name=ticker),secondary_y=False)
     return fig
 
-def CandleStick(ticker: str, period: str = '1yr'):
+def CandleStick(ticker: str, period: str = '5yr'):
     stock = stocks.FetchStockHistory(ticker, period=period)
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Candlestick(x=stock.index,
@@ -36,5 +40,5 @@ def CandleStick(ticker: str, period: str = '1yr'):
     fig.update_layout(xaxis_rangeslider_visible=False)
     return fig
 
-def GetHTMLCanvas(fig, path=r'data\graph.html'):   
-    fig.write_html(path)
+def GetHTMLCanvas(fig, path: str = os.path.join('src', 'data', 'graph.html')):   
+    fig.write_html(file=open(file=path, mode='w'))
