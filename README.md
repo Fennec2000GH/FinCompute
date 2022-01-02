@@ -1,4 +1,4 @@
-# FinCompute
+# FinCompute 💰
 
 ![language](https://img.shields.io/badge/language-R-blue?style=plastic&logo=appveyor)
 ![language](https://img.shields.io/badge/language-python3.9-yellow?style=plastic&logo=appveyor)
@@ -9,6 +9,8 @@
 ----------------------------------------------------------------------------------------------------
 
 The epic fusion of stock analytics and personal finance.
+
+![thumbnail](https://raw.githubusercontent.com/Fennec2000GH/FinCompute/main/thumbnail.gif)
 
 ## Instructions 📝
 1. `git clone https://github.com/Fennec2000GH/FinCompute.git && cd ./FinCompute`
