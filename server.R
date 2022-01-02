@@ -63,7 +63,7 @@ server <- function(input, output, session) {
       plotly::plot_ly(
         data = stock.index,
         x = rownames(x = stock.index),
-        y = stock.index[, c("High")],
+        y = stock.index[1:10, c("High")],
         type = "scatter"
       )
     })
@@ -95,19 +95,34 @@ server <- function(input, output, session) {
       
       # readChar(con = files$datapath, file.info(files$datapath)$size)
       message(files$type)
-      files <- files %>% mutate(sentiment =
-          # {
-          ifelse(
-            test = startsWith(x = type,  prefix="text/"),
-            yes = readr::read_file(file = datapath),
-            no = pdftools::pdf_text(pdf = datapath)
-          )
-          # message(content)
-          # content
-          # }
+      files <- files %>% mutate(
+        content = (function() {
+            content <- ifelse(
+              test = startsWith(x = type,  prefix="text/"),
+              yes = readr::read_file(file = datapath),
+              no = pdftools::pdf_text(pdf = datapath)
+            )
+            message(content)
+            sentiment.obj <- analyze_sentiment(text = content)
+            toString(x = sentiment.obj)
+          })()
         )
        
       files
+    })
+    
+    output$content <- shiny::renderText(expr = {
+      files <- input$uploadFile
+      
+      if (is.null(x = files)) {
+        return (NULL)
+      }
+      
+      ifelse(
+        test = startsWith(x = files$type,  prefix="text/"),
+        yes = readr::read_file(file = files$datapath),
+        no = pdftools::pdf_text(pdf = files$datapath)
+      )
     })
 }
 
