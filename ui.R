@@ -41,16 +41,16 @@ ui <- shiny::shinyUI(ui = shiny::fluidPage(
             shiny::titlePanel(title = "Enter financial goals for 2022:"),
             shiny::sidebarLayout(
               shiny::sidebarPanel(width = 1,
-                shiny::checkboxInput(inputId = "c1", label = "1"),
-                shiny::checkboxInput(inputId = "c2", label = "2"),
-                shiny::checkboxInput(inputId = "c3", label = "3"),
-                shiny::checkboxInput(inputId = "c4", label = "4"),
-                shiny::checkboxInput(inputId = "c5", label = "5"),
-                shiny::checkboxInput(inputId = "c6", label = "6"),
-                shiny::checkboxInput(inputId = "c7", label = "7"),
-                shiny::checkboxInput(inputId = "c8", label = "8"),
-                shiny::checkboxInput(inputId = "c9", label = "9"),
-                shiny::checkboxInput(inputId = "c10", label = "10")
+                shinyWidgets::switchInput(inputId = "c1", label = "1", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c2", label = "2", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c3", label = "3", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c4", label = "4", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c5", label = "5", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c6", label = "6", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c7", label = "7", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c8", label = "8", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c9", label = "9", labelWidth = "80px"),
+                shinyWidgets::switchInput(inputId = "c10", label = "10", labelWidth = "80px")
               ),
               shiny::mainPanel(width = 11,
                 shiny::textInput(inputId = "c1Label", label = "", placeholder = "Goal #1"),
@@ -77,13 +77,14 @@ ui <- shiny::shinyUI(ui = shiny::fluidPage(
       shiny::tabPanel(title = "Financial Sentiment Analysis",
         shiny::fileInput(
           inputId = "uploadFile",
-          label = "Sentiment Analysis of Financial Document",
+          label = "Upload any financial newsletter, report, or discussion:",
           buttonLabel = "Upload File",
           multiple = FALSE,
           accept = c("text/*", "application/pdf")
         ),
         
-        shiny::dataTableOutput(outputId = "sentiment")
+        shiny::dataTableOutput(outputId = "sentiment"),
+        shiny::textOutput(outputId = "content")
       )
     )
 ))
