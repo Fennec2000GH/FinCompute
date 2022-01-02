@@ -17,6 +17,7 @@ library(plotly)
 library(readr)
 library(reticulate)
 library(rstudioapi)
+library(zoo)
 
 # finance packages
 # library(quantmod)
@@ -39,14 +40,23 @@ reticulate::source_python(file = draw.path)
 reticulate::source_python(file = sentiment.path)
 
 # stock <- FetchStock(ticker = "TSLA")
-# print(stock$cashflow)   
-# 
-# FetchIndexFund(index="BBY")
+# print(stock$analysis)
 
-
+# helper function to convert selected period to days
+periodToDays <- function(period) {
+  num <- as.numeric(x = unlist(x = stringr::str_split(string = period, pattern = "[^\\d]"))[1])
+  if (endsWith(x = period, suffix = "d")) {
+    num
+  } else if (endsWith(x = period, suffix = "w")) {
+    num * 7
+  } else if (endsWith(x = period, suffix = "m")) {
+    num * 30
+  } else {
+    num * 365
+  }
+}
+  
 # Define server logic
-
-
 server <- function(input, output, session) {
     output$stocksPlot <- plotly::renderPlotly(expr = {
       message("output$stocksPlot")
@@ -59,22 +69,41 @@ server <- function(input, output, session) {
       # shiny::includeHTML(path = file.path("src", "data", "graph.html"))
       # fig  
       
-      stock.index <- FetchIndexFund(index=input$stocksSearch) 
-      plotly::plot_ly(
-        data = stock.index,
-        x = rownames(x = stock.index),
-        y = stock.index[1:10, c("High")],
-        type = "scatter"
+      stock.name <- input$stocksSearch
+      quantmod::getSymbols(Symbols = "TSLA", src = "yahoo")
+      df <- data.frame(
+        Date = zoo::index(x = TSLA),
+        zoo::coredata(x = TSLA)
       )
+      df <- tail(x = df, n = periodToDays(period = input$stocksPeriod))
+      fig <- df %>% plotly::plot_ly(x = ~Date, type="candlestick",
+                                    open = ~TSLA.Open,
+                                    close = ~TSLA.Close,
+                                    high = ~TSLA.High,
+                                    low = ~TSLA.Low
+                                  )
+      fig <- fig %>% plotly::layout(title = "Candlestick Chart")
+      fig
+    })
+  
+    output$stocksAnalysis <- shiny::renderDataTable(expr = {
+      message("output$stocksAnalysis")
+      stock <- FetchStock(ticker = input$stocksSearch)
+      stock$analysis
+    })
+
+    output$stocksTimeSeries <- shiny::renderDataTable(expr = {
+      message("output$stocksTimeSeries")
+      FetchIndexFund(index=input$stocksSearch) 
     })
   
     output$stocksHistory <- shiny::renderTable(expr = {
       message("output$stocksHistory")
       message("stock.history")
-      stock.history <- as.data.frame(x = FetchStockHistory(
+      stock.history <- FetchStockHistory(
         ticker=input$stocksSearch, 
         period=input$stocksPeriod
-      ))
+      )
       
       message(typeof(x = stock.history))
       stock.history
@@ -84,6 +113,13 @@ server <- function(input, output, session) {
       message("output$stocksInfo")
       stock.info <- FetchStockInfo(ticker=input$stocksSearch)
       unlist(x = stock.info)
+    })
+    
+    output$stocksBalanceSheet <- shiny::renderTable(expr = {
+      message("output$stocksIBalanceSheet")
+      stock <- FetchStock(ticker=input$stocksSearch)
+      message(typeof(x = stock$balance_sheet))
+      unlist(x = stock$balance_sheet)
     })
     
     output$sentiment <- shiny::renderDataTable(expr = {

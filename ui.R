@@ -11,9 +11,8 @@ library(shiny)
 library(shinyWidgets)
 
 # Define UI for application that draws a histogram
-ui <- shiny::shinyUI(ui = shiny::fluidPage(
-
-    # Application title
+ui <- shiny::shinyUI(ui = shiny::bootstrapPage(
+    # shiny::includeCSS(path = "app.css"),
     shiny::titlePanel(title = "FinCompute", windowTitle = "FinCompute (Running...)"),
     
     shiny::tabsetPanel(
@@ -24,10 +23,16 @@ ui <- shiny::shinyUI(ui = shiny::fluidPage(
         ),
 
         shiny::mainPanel(
-          shiny::plotOutput(outputId = "stocksPlot"),
-          shiny::titlePanel(title = "At a glance..."),
+          plotly::plotlyOutput(outputId = "stocksPlot"),
+          shiny::titlePanel(title = "Analysis"),
+          shiny::dataTableOutput(outputId = "stocksAnalysis"),
+          shiny::titlePanel(title = "Quick History"),
           shiny::tableOutput(outputId = "stocksHistory"),
-          shiny::tableOutput(outputId = "stocksInfo")
+          shiny::titlePanel(title = "Detailed History"),
+          shiny::dataTableOutput(outputId = "stocksTimeSeries"),
+          # shiny::tableOutput(outputId = "stocksInfo")
+          shiny::titlePanel(title = "Balance Sheet"),
+          shiny::tableOutput(outputId = "stocksBalanceSheet")
         )
       ),
       
